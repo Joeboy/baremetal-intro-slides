@@ -1,0 +1,140 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Inconsolata">
+
+
+<style type="text/css">
+body {
+        font-family: 'Inconsolata', serif;
+        background-color:#E4F5F3;
+        font-size: 1.7em;
+}
+.slide {
+    margin-left: 40px;
+    margin-right: 200px;
+}
+
+.slide li {
+    margin-bottom: 0.7em;
+}
+
+.slide ul {
+    margin-bottom: 1.5em;
+}
+</style>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+var slides;
+var slide_index = 0;
+var slide;
+var li_index = 0;
+var lis;
+var li;
+
+var show_slide = function() {
+    slide = $(slides[slide_index]);
+    slide.show();
+    lis = slide.find('li');
+    lis.hide();
+    li_index = 0;
+};
+
+var show_next = function() {
+    if (li_index < lis.length) {
+        $(lis[li_index]).show();
+        li_index++;
+    } else {
+        slide.hide();
+        slide_index++;
+        show_slide();
+    }
+};
+
+var show_prev = function() {
+    if (li_index > 0) {
+        li_index--;
+        $(lis[li_index]).hide();
+    } else {
+        if (slide_index <= 0) return;
+        slide.hide();
+        slide_index--;
+        show_slide();
+        lis.show();
+        li_index = lis.length ;
+    }
+}
+
+$(document).ready(function() {
+    slides = $(".slide");
+    slides.hide();
+    show_slide();
+    $(window).keypress(function(ev) {
+        if (ev.which == 8) {
+            show_prev();
+        } else {
+            show_next();
+        }
+    });
+});
+</script>
+</head>
+
+<body>
+<div class="slide">
+<h2>Bare metal - what does it mean?</h2>
+    <ul>
+        <li>"Normally", the Raspberry Pi runs Linux, an operating system which takes care of boring stuff like reading the keyboard, writing to the screen, scheduling tasks etc</li>
+        <li>For simple applications (eg. embedded applications), it's fairly simple to take care of those things yourself, so you don't need to run Linux (or any other readymade operating system).</li>
+    </ul>
+</div>
+
+<div class="slide">
+<h2>Pros and Cons of baremetal programming</h2>
+    <ul>
+        <li>Pro: Efficiency (dubious)</li>
+        <li>Pro: Simplicity (NB simple != easy)</li>
+        <li>Pro: Fast startup time</li>
+        <li>Pro: You'll be writing code that's portable to arm devices that don't run Linux (eg. TI Stellaris, STM32)</li>
+        <li>Pro: It's fun, and you will be cool and awesome like Linus Torvalds</li>
+    </ul>
+    <ul>
+        <li>Con: You'll need to know (or learn) a low-level language like C, C++ or ARM ASM</li>
+        <li>Con: Writing everything from scratch can be a lot of work, some of it quite painful</li>
+    </ul>
+</div>
+
+<div class="slide">
+    <h2>Doing it</h2>
+    <ul>
+        <li>Everything you need to get started is at <a href="https://github.com/dwelch67/raspberrypi">https://github.com/dwelch67/raspberrypi</a></li>
+        <li>First, build yourself an arm-none-eabi gcc toolchain using the build_gcc script. You should end up with versions of gcc, g++ etc that can build binaries for the Pi</li>
+        <li>Build one of the examples, eg. the simple blinker01 example which just blinks the LED</li>
+        <li>Prepare an SD card with bootcode.bin and start.elf (from <a href="https://github.com/raspberrypi/firmware/tree/master/boot">https://github.com/raspberrypi/firmware/tree/master/boot</a>), and the kernel.img file you just built</li>
+        <li>Stick the SD card in your Pi, power it off and (hopefully) watch it blink. Not so hard, really.</li>
+    </ul>
+</div>
+
+<div class="slide">
+    <h2>Developing and debugging</h2>
+    <ul>
+        <li>Writing to the SD card and transferring it to the Pi every time you want to run your code is a pain, so:</li>
+        <li>Buy yourself an FTDI serial cable. You can find them on ebay for about a tenner. Make sure you get a 3.3 volt one, as 5 volt ones will damage your Pi.</li>
+        <li>Build the bootloader03 project from dwelch's aforementioned repository (<a href="https://github.com/dwelch67/raspberrypi/tree/master/bootloader03">https://github.com/dwelch67/raspberrypi/tree/master/bootloader03</a>)</li>
+        <li>Write the resulting kernel.img to your SD card and stick it in your Pi</li>
+        <li>Now you can transfer code to the Pi via your FTDI cable using minicom on your development machine. Much better.</li>
+    </ul>
+</div>
+
+<div class="slide">
+    <h2>And that's basically it</h2>
+
+    <ul>
+        <li>Well, Ok, no, it isn't.</li>
+        <li>But it should be enough to get you started. Dwelch's examples and Google should help you with the rest.</li>
+        <li>If you're going to be doing anything much with the pi's hardware (beyond blinking LEDs, communicating via the UART etc), you'll want this: <a href="http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf">http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf</a>.</li>
+        <li>Good luck!</li>
+    </ul>
+
+</body>
+</html>
